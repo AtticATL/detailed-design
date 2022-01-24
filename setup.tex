@@ -1,0 +1,86 @@
+\usepackage[T1]{fontenc}
+
+% Titling
+\usepackage{titling}
+\pretitle{\raggedright\Huge}
+\posttitle{\par\vspace{0.5em}}
+\preauthor{\raggedright\large}
+\postauthor{\par\vspace{0.5em}}
+\predate{\raggedright}
+\postdate{\par}
+
+% Lists
+\usepackage{enumerate}
+
+% For mathematical documents
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Parskip
+% \usepackage{parskip}
+% \AtBeginDocument{\setlength{\parindent}{0pt}}
+
+% Titlesec tiny
+\usepackage[rm]{titlesec}
+
+% Try to kill widow lines (at top of page) and orphans (at bottom)
+\widowpenalty=500
+% \clubpenalty=1000
+
+% Use endnotes
+\usepackage{endnotes}
+\let\footnote=\endnote
+
+
+% little more space before footnote line
+\setlength{\skip\footins}{1.5em plus 1em}
+
+% it's OK to break URls on hyphens
+\usepackage[hyphens]{url}
+\usepackage[hidelinks]{hyperref}
+
+% Colors
+\usepackage{xcolor}
+
+% Qframe
+\usepackage{mdframed}
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  skipabove=0pt,
+  skipbelow=12pt
+]{question}
+\newcommand{\q}[1]{\begin{question}#1\end{question}}
+
+% Outlines package
+\usepackage{outlines}
+
+% % Bibliography
+% \usepackage[american]{babel}
+% \usepackage{csquotes}
+% \usepackage[notes,backend=biber]{biblatex-chicago}
+% \addbibresource{./bibliography.bib}
+
+
+% Tabstop
+\setlength{\parindent}{2em}
+
+% Font stylings.
+\usepackage{microtype}
+% \usepackage{times} % Times New Roman font
+% \usepackage{helvet} % Helvetica
+% \usepackage{tgtermes} % TeX Gyre Termes
+\usepackage{charter} % Charter
+
+% Line spacing
+\usepackage{setspace}
+\onehalfspacing
+
+% Margins
+\usepackage[hmargin=1.6in,top=0.8in,bottom=1in]{geometry}
+
+% % Crap formatting, for test
+% \usepackage[margin=1in]{geometry}
+% \usepackage{setspace}
+% \doublespacing
