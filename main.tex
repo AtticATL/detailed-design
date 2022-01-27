@@ -5,17 +5,27 @@
 \author{Team 1311 | Attic ATL}
 \date{\today}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 
+%%  Style guide for this document, from our profs:
+%% 
+%%  https://docs.google.com/document/d/1mKNSH7JZIZtfIhlVIQ8ricIseh6Ep9nLEM6A-bhde0M/edit
+%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \begin{document}
 
+% Use lowercase roman numerals for the frontmatter page numbers
 \pagenumbering{roman}
-\vspace*{1in}
+
+\vspace*{6em}
 
 \newcommand{\titlelabeltext}[1]{\vspace{3em}\noindent{\color{gray}\Large{}#1}\par\vspace{0.5em}}
 \newcommand{\titlebigtext}[1]{\noindent{\Huge{}#1}}
 
 \titlelabeltext{Detailed Design of}
-\noindent{}{\Huge{}OI TriageApp}
+\noindent{}{\Huge{}OI TriageApp}\par
 
 \titlelabeltext{Prepared For}
 \noindent{}{\Large{}%
@@ -24,10 +34,10 @@ Emory University
 }
 
 \titlelabeltext{Our Team}
-
 \noindent{}Junior Design Team 1311\par
 \vspace{0.5em}
 
+% Table of team members
 \newcommand{\email}[1]{\href{mailto:#1}{\url{#1}}}
 \noindent\begin{tabular}{@{}ll}
 William \textsc{Goodall} & \email{owo@gatech.edu} \\
@@ -40,18 +50,28 @@ Logan \textsc{Cyterski} & \email{lcyterski3@gatech.edu} \\
 \titlelabeltext{Our Code}
 \noindent\url{https://github.com/AtticATL/triage-app}
 
+% Put the date the document was compiled on the title page.
+\vfill
+\noindent{\color{gray}Prepared on \today}
+\vspace{5em}
+
+% Insert a page with the table of contents
 \newpage
 \tableofcontents
 
+% Insert the the list of figures
 \vspace{1in}
 \listoffigures
 
-\newpage
-
+% On the next page (start of body text), switch the page numbering to arabic
+% instead of lowercase roman numerals
 \newpage
 \pagenumbering{arabic}
 
 \section{Introduction}
+% Introduce your project, providing relevant background information (e.g. client profile, rationale for the project, project requirements etc.) and
+% Provide a summary of what the Detailed Design document will cover.
+% Page numbering begins with Arabic number 1
 \subsection{Background}
 \subsection{Document Summary}
 
@@ -59,20 +79,39 @@ Logan \textsc{Cyterski} & \email{lcyterski3@gatech.edu} \\
 
 \section{System Architecture}
 \subsection{Static Design}
+% Static: A structural diagram is provided that shows low-level components (classes, web pages, etc.) and their static relationships. Descriptions of functionality or attr/methods are shown. Appropriate syntax for standard diagrams, explanations for non-standard diagrams.
+
 \subsection{Dynamic Design}
+% Dynamic: A diagram is provided that shows runtime interactions of the static components. Appropriate diagram is chosen. Behavior illustrates how system will operate on a non-trivial use case.
 
 \section{Data Storage}
+% For database use: An ER diagram is provided. Relationships between tables and cardinality constraints are shown. Tables are appropriately normalized. PK/FK relationships are shown if needed.
+% For file use: Format is documented if non-standard. Otherwise, a standard format is chosen.  
+% For data exchange: Format is documented.
+
 
 \section{Component Design}
 
+See figure \ref{fig:example} for more details.
+
+\begin{figure}[H]
+    \centering
+    this is an example figure
+    \caption{Something Useful}
+    \label{fig:example}
+\end{figure}
+
 \section{UI Design}
+% Major screens are provided.  
+% Widget selection and layout which is appropriate and logical  
+% Proper UI design principles are applied to the screen design.
 
 
 
-% % Insert Bibliography
-% \clearpage
-% \nocite{*}
-% \singlespacing\theendnotes\clearpage{}
-% \printbibliography[title={Works Cited}]
+% Insert Bibliography
+% Note: we're required to use IEEE style here
+\clearpage
+\nocite{*}
+\printbibliography[title={References}]
 
 \end{document}
