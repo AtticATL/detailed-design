@@ -72,10 +72,47 @@ Logan \textsc{Cyterski} & \email{lcyterski3@gatech.edu} \\
 % Introduce your project, providing relevant background information (e.g. client profile, rationale for the project, project requirements etc.) and
 % Provide a summary of what the Detailed Design document will cover.
 % Page numbering begins with Arabic number 1
+The purpose of this document as a whole is to summarize the creation of the OI Triage-App. To that end, we are Attic ATL working under the supervision of Dr. Dina Amin to make an application which will facilitate easy transfers of medical patients with OI infections between hospitals. 
 \subsection{Background}
-\subsection{Document Summary}
 
+We are creating this application on behalf of our client, Dr. Dina Amin, an Associate Chief of Oral and Maxillofacial Surgery Service at Grady Memorial Hospital. Based on her experience, one of the least optimized aspects in the medical field is the act of transferring a patient and how they are dealt with on either end of the transfer. Often, these transfers are done by way of a phone call, in which it can be challenging to communicate all important details about a patient prior to transfer. This leads to situations where crucial patient information (eg. status, allergies, or more recently, COVID diagnosis) can be lost in the transfer which will place a burden on the receiving hospital's staff as they must go through the process of documenting these details once again. 
+
+As such, the aim of this application is to create a one-stop shop which can document all of a patient's details prior to transfer and therefore alleviate the burden on the receiving hospital's staff. In order to achieve this, we will fulfill the following requirements: first, 
+
+%finish this section when we agree on requirements
+
+At the conclusion of this project, we hope for a successful deployment into the hands of medical professionals, who can begin immediately using it to facilitate easy and efficient patient transfers.
+\subsection{Document Summary}
+As for the rest of this document, we will first cover some important terminology as well as our actual architecture and design elements in the coming sections. Following this, we will discuss how we store important data (including how we avoid violating HIPAA) and our component design, with the last important section being UI design.
 \section{Terminology}
+
+\textbf{Triage:} The assignment of degrees of urgency to wounds or illnesses to decide the order of treatment of a large number of patients or casualties.
+\\
+\textbf{Odontegenic;} Of or relating to the formation and development of teeth.
+\\
+\textbf{Front-End:} The area of development relating to the "user's side" of the application, including areas such as the user interface.
+\\
+\textbf{Patient Transfer:} The process of transferring a patient from one hospital to another based off of risk and benefit analysis of the patient and each hospital's capabilities. Traditionally done through a secure telephone call as per HIPPA compliance.
+\\
+\textbf{HIPPA:} The Health Insurance Portability and Accountability Act of 1960. An act that sets certain mandates that must be followed by all medical professionals to ensure patient's privacy and protection over their health information.
+\\
+\textbf{Back-End:} The area of development relating to the "developer's side" of the application, including areas such as the internal database.
+\\
+\textbf{Open-Source:} A classification of software where the code to construct it is readily available to the public, allowing for easy distribution and modification.
+\\
+\textbf{JavaScript:} A programming language used in the construction of nearly all modern websites.
+\\
+\textbf{React:}  A free and open source framework JavaScript library that allows for the creation of user interface through a UI component system.
+\\
+\textbf{React Native:} A front-end framework using React to allow for seamless multi-platform mobile app development. 
+\\
+\textbf{MySQL:} An open-source relational database that works across most platforms and allows mass storage of data securely and privately.
+\\
+\textbf{SQL:} Structured Query Language, a domain-specific language used in programming that is
+intended to manage data in relational data stream management systems.
+\\
+\textbf{Heroku:} a platform as a service that enables developers to build, run, and operate applications entirely in the cloud.
+
 
 \section{System Architecture}
 \subsection{Static Design}
@@ -96,7 +133,7 @@ See figure \ref{fig:example} for more details.
 
 \begin{figure}[H]
     \centering
-    this is an example figure
+    this is an example figure. you can put an image here with the includegraphics macro
     \caption{Something Useful}
     \label{fig:example}
 \end{figure}
