@@ -22,6 +22,7 @@
 
 % Titlesec tiny
 \usepackage[rm]{titlesec}
+\titleformat{\paragraph}[runin]{\bfseries}{}{}{}[]  % Paragraph headings as run-in
 
 % Try to kill widow lines (at top of page) and orphans (at bottom)
 \widowpenalty=500
@@ -41,6 +42,9 @@
 
 % Float exactly here
 \usepackage{float}
+\usepackage{subcaption}
+\usepackage{lscape}
+\usepackage{graphicx}
 
 % Colors
 \usepackage{xcolor}

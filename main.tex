@@ -73,51 +73,115 @@ Logan \textsc{Cyterski} & \email{lcyterski3@gatech.edu} \\
 % Provide a summary of what the Detailed Design document will cover.
 % Page numbering begins with Arabic number 1
 The purpose of this document as a whole is to summarize the creation of the OI Triage-App. To that end, we are Attic ATL working under the supervision of Dr. Dina Amin to make an application which will facilitate easy transfers of medical patients with OI infections between hospitals. 
-\subsection{Background}
 
+\subsection{Background}
 We are creating this application on behalf of our client, Dr. Dina Amin, an Associate Chief of Oral and Maxillofacial Surgery Service at Grady Memorial Hospital. Based on her experience, one of the least optimized aspects in the medical field is the act of transferring a patient and how they are dealt with on either end of the transfer. Often, these transfers are done by way of a phone call, in which it can be challenging to communicate all important details about a patient prior to transfer. This leads to situations where crucial patient information (eg. status, allergies, or more recently, COVID diagnosis) can be lost in the transfer which will place a burden on the receiving hospital's staff as they must go through the process of documenting these details once again. 
 
 As such, the aim of this application is to create a one-stop shop which can document all of a patient's details prior to transfer and therefore alleviate the burden on the receiving hospital's staff. In order to achieve this, we will fulfill the following requirements: first, we wish to create a secure application with image, video, and data transfer capabilities. Second, we want our application to be as streamlined as possible to take the burden off of medical staff. Third, we want our application to be HIPAA compliant so it will not cause legal problems in use.  
 
 At the conclusion of this project, we hope for a successful deployment into the hands of medical professionals, who can begin immediately using it to facilitate easy and efficient patient transfers.
+
 \subsection{Document Summary}
 As for the rest of this document, we will first cover some important terminology as well as our actual architecture and design elements in the coming sections. Following this, we will discuss how we store important data (including how we avoid violating HIPAA) and our component design, with the last important section being UI design.
+
 \section{Terminology}
 
-\textbf{Triage:} The assignment of degrees of urgency to wounds or illnesses to decide the order of treatment of a large number of patients or casualties.
-\\
-\textbf{Odontegenic;} Of or relating to the formation and development of teeth.
-\\
-\textbf{Front-End:} The area of development relating to the "user's side" of the application, including areas such as the user interface.
-\\
-\textbf{Patient Transfer:} The process of transferring a patient from one hospital to another based off of risk and benefit analysis of the patient and each hospital's capabilities. Traditionally done through a secure telephone call as per HIPPA compliance.
-\\
-\textbf{HIPPA:} The Health Insurance Portability and Accountability Act of 1960. An act that sets certain mandates that must be followed by all medical professionals to ensure patient's privacy and protection over their health information.
-\\
-\textbf{Back-End:} The area of development relating to the "developer's side" of the application, including areas such as the internal database.
-\\
-\textbf{Open-Source:} A classification of software where the code to construct it is readily available to the public, allowing for easy distribution and modification.
-\\
-\textbf{JavaScript:} A programming language used in the construction of nearly all modern websites.
-\\
-\textbf{React:}  A free and open source framework JavaScript library that allows for the creation of user interface through a UI component system.
-\\
-\textbf{React Native:} A front-end framework using React to allow for seamless multi-platform mobile app development. 
-\\
-\textbf{MySQL:} An open-source relational database that works across most platforms and allows mass storage of data securely and privately.
-\\
-\textbf{SQL:} Structured Query Language, a domain-specific language used in programming that is
-intended to manage data in relational data stream management systems.
-\\
-\textbf{Heroku:} a platform as a service that enables developers to build, run, and operate applications entirely in the cloud.
+\paragraph{Triage}
+The assignment of degrees of urgency to wounds or illnesses to decide the order of treatment of a large number of patients or casualties.
+
+\paragraph{Odontegenic}
+Of or relating to the formation and development of teeth.
+
+\paragraph{Front-End} The area of development relating to the "user's side" of the application, including areas such as the user interface.
+
+\paragraph{Patient Transfer} The process of transferring a patient from one hospital to another based off of risk and benefit analysis of the patient and each hospital's capabilities. Traditionally done through a secure telephone call as per HIPPA compliance.
+
+\paragraph{HIPPA} The Health Insurance Portability and Accountability Act of 1960. An act that sets certain mandates that must be followed by all medical professionals to ensure patient's privacy and protection over their health information.
+
+\paragraph{End-to-End Encryption}
+A design practice where data is encrypted and decrypted locally, making it impossible for the administrators of the app to see or access user data in any way.
+
+\paragraph{Backend}
+The area of development relating to the "developer's side" of the application, including areas such as the internal database.
+
+\paragraph{Open-Source}
+A classification of software where the code to construct it is readily available to the public, allowing for easy distribution and modification.
+
+\paragraph{JavaScript}
+A programming language originally designed for websites, but now widely used across the web, mobile devices, and on the backend.
+
+\paragraph{JSON}
+A standard format for encoding structured data into machine-readable text. Stands for ``JavaScript Object Notation.''
+
+\paragraph{React}
+A free and open source JavaScript library for designing user interfaces. 
+
+\paragraph{React Native}
+A toolkit that adapts React for use on iOS and Android mobile devices.
+
+\paragraph{Expo}
+A mobile app development tool, based on React Native, that lets developers use a single codebase to target iOS, Android, and Web platforms.
 
 
 \section{System Architecture}
+
+\subsection{Introduction}
+% Introduce this section by providing your reader with enough context to understand the information that follows. 
+% Include the rationale behind your team’s architectural choices.
+
+The primary constraint governing the design of our app is security. Both to comply with HIPAA, and just as good practice, all the data in our app is end-to-end encrypted. This means that, on the device of the sending ED physician, the patient profile is encrypted with a unique key. The encrypted data---called ``ciphertext''---can be freely uploaded to our backend services, because it's indecipherable without the key. The key, which in practice is a short bit of text, can be transferred to the receiving surgeon through an already-secure channel, like a phone call with a transfer center, or a URL sent over a secure messaging service. The receiving surgeon's device can fetch that ciphertext from our backend service, decrypt it with the key, and view the profile.
+
+Because of this constraint, our app is essentially split into two halves: the sending half, responsible for filling out the profile, encrypting it, and uploading the ciphertext; and the receiving half, responsible for fetching the ciphertext, decrypting it, and displaying its data to the user.
+
+To better understand the internal architecture of our app, we've provided both static and dynamic high-level design diagrams depicting the structural components of the application as well as how they relate to one another.
+
+
 \subsection{Static Design}
+% Static elements: Major architectural components are shown. Logical relationships between components are clear. There are acyclic dependencies. Style(s) are applied when appropriate. Style is correctly applied.
 % Static: A structural diagram is provided that shows low-level components (classes, web pages, etc.) and their static relationships. Descriptions of functionality or attr/methods are shown. Appropriate syntax for standard diagrams, explanations for non-standard diagrams.
 
+The figure below shows a static architectural design diagram depicting a functional view of the system, showing how different components of our app relate to one another.
+
+\begin{landscape}
+\begin{figure}
+    \centering
+    \includegraphics[width=8in]{static-design.pdf}
+    \caption{Design of app components}
+    \label{fig:static-design}
+\end{figure}
+\end{landscape}
+
+Due to the nature of our application and its need to be compliant with HIPPA, much of the interconnected components in the background of our application deal with cryptography and ensuring that all the patient data is properly encrypted and sent. Each element of this diagram which contains a key symbol signifies that it has access to an encryption key for the current data it holds.
+
+The first major component of our app's architecture is the front-end user portion. This mainly consists of four different systems- the profile entry form and attachment uploader for the sender and the profile display and media viewer for the receiver. These serve as the user's interface to interact with the application, with the profile entry form and attachment uploader working together to generate a profile for the patient while the profile display and media viewer serve to allow a user to see profile data on their own device. 
+
+The second major component of our application is the storage back-end. This is where the data is encrypted and sent to the cloud for storage. Whilst sending a profile, an encryption key is generated with it. This key is sent to the web crypto library, which serves to exist as a library containing all of the keys needed to encrypt and decrypt patient data. Once these keys are stored, the encrypted data is stored in the Firebase Cloud Storage, which allows us to store mass amounts of data while being HIPPA compliant as the data stored is all encrypted and unreadable until an app containing the keys decrypts it. 
+
 \subsection{Dynamic Design}
+
+The dynamic architecture design system sequence diagram provides a look at the two main control flows of our application and how they interact with the different components of the application. Figure 2 depicts the control flow of a user sending a patient profile to the cloud, and Figure 3 depicts the control flow of a user recieving a patient profile from the cloud. 
+
 % Dynamic: A diagram is provided that shows runtime interactions of the static components. Appropriate diagram is chosen. Behavior illustrates how system will operate on a non-trivial use case.
+% Dynamic elements: A scenario or SSD is provided to show runtime behavior. Components interact logically and in accordance with style chosen.
+
+% Edit the SSD at:
+% https://swimlanes.io/u/yM7aQAwsB
+
+\begin{landscape}
+\begin{figure}
+    \centering
+    \includegraphics[width=9in]{sequence-diagram-1.png}
+    \caption{Sequence of events to encrypt and send a profile}
+    \label{fig:sequence-1}
+\end{figure}
+\begin{figure}
+    \ContinuedFloat
+    \centering
+    \includegraphics[width=9in]{sequence-diagram-2.png}
+    \caption{Sequence of events to decrypt and receive a profile}
+    \label{fig:sequence-2}
+\end{figure}
+\end{landscape}
 
 \section{Data Storage}
 % For database use: An ER diagram is provided. Relationships between tables and cardinality constraints are shown. Tables are appropriately normalized. PK/FK relationships are shown if needed.
@@ -126,15 +190,6 @@ intended to manage data in relational data stream management systems.
 
 
 \section{Component Design}
-
-% See figure \ref{fig:example} for more details.
-
-% \begin{figure}[H]
-%     \centering
-%     this is an example figure. you can put an image here with the includegraphics macro
-%     \caption{Something Useful}
-%     \label{fig:example}
-% \end{figure}
 
 \section{UI Design}
 % Major screens are provided.  
