@@ -13,7 +13,6 @@
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \begin{document}
 
 % Use lowercase roman numerals for the frontmatter page numbers
@@ -61,7 +60,7 @@ Logan \textsc{Cyterski} & \email{lcyterski3@gatech.edu} \\
 
 % Insert the the list of figures
 \vspace{1in}
-% \listoffigures
+\listoffigures
 
 % On the next page (start of body text), switch the page numbering to arabic
 % instead of lowercase roman numerals
@@ -188,8 +187,58 @@ The dynamic architecture design system sequence diagram provides a look at the t
 % For file use: Format is documented if non-standard. Otherwise, a standard format is chosen.  
 % For data exchange: Format is documented.
 
+The data storage needs for this app are not particularly complex: we need to be able to store a few fields of data that represent a patient profile (name, date of birth, triage information, etc), and we need to be able to store media attachments to that profile (like images). However, we are subject to a few significant constraints, which impose extra complexity on our implementation.
+
+The first constraint is security. All data should be end-to-end encrypted, and inaccessible to the operators of the app's backend. This rules out using a traditional architecture, where we would host a single database server behind some application code to perform logic and enforce access control. To solve this, we encrypt all application data on the device before it gets sent to our backend---and the only thing our backend can see is blobs of ciphertext.
+
+The second constraint is portability. Data needs to be transferable between instances of the app, even if those instances are running slightly different versions. To solve this, we're using a schema to strictly define the shape of our data, so that an instance of the app receiving data knows exactly what it's going to get.
+
+Our implementation, taking in mind our objectives and constraints, is based on an encrypted, globally-synced key-value store. This store implements two operations---\verb|get| and \verb|put|. The \verb|put| operation takes some data, encrypts it, stores the ciphertext in cloud storage, and returns a handle: composed of a unique identifier for that data, and the key required to decrypt it. The \verb|get| operation does the reverse: it takes a handle, uses it to fetch the right data from cloud storage, and returns the plaintext back to the caller.
+
+When a user uses the app, they fill out a profile---which is represented internally as a JSON object conforming with our schema---and select media from their device to be included as attachments. Each media attachment is stored in the key-value store (using the \verb|put| operation). The handles for each attachment are stored in the profile JSON. Once all the attachments are encrypted and uploaded, we store the full profile in the key-value store as well. The handle for the profile can then be transfered between devices out-of-band. 
+
+Because these data handles contain key material, a receiving app can use a handle it gets from a user to fetch and decrypt a profile. This profile will contain handles for any media attachments which have been included---which the app can fetch and decrypt as well. Once the receiving side has done this, it has all the information it needs to present the profile to the user.
+
+We've specified the format of the profile data in code with a schema. This helps to catch any bugs involving the data format, because the same functionality that checks user input for correctness (e.g. that birth dates must be in the past) will also check the app's code for correctness (e.g. a typo on a field name, or leaving a value \verb|null| when it should be defined). The source code defining the schema is included as appendix \ref{appendix:profile}.
+
 
 \section{Component Design}
+
+\subsection{Introduction}
+
+In this section,we will be going over the general design of the application as we did in the system architecture section, but this time taking a more in-depth look as to the individual class components that make up the application. Using both a static component diagram and a dynamic system sequence diagram, we aim to better represent the interactions and relationships of the internal components that make up our application.
+
+\subsection{Static Diagram}
+
+The component diagram below designates a static view of the different components of our application, clarifying hierarchies, ownership, and designed associations.
+
+\begin{landscape}
+\begin{figure}
+    \centering
+    \includegraphics[width=8in]{component.png}
+    \caption{Component diagram of application's interactions}
+    \label{a}
+\end{figure}
+\end{landscape}
+
+The TriageApp subsystem makes up the majority of our application. This includes two sets of components for each of the two main functions of our application- a CreateProfileScreen that accesses its subsequent ProfileEncoder for the sending party, and a RecieveProfileScreen that accesses its subsequent ProfileDecoder for the receiving party. Both components use the ports outside of the TriageApp, produce a cryptography hash, and Firebase query respectively to get/store the cryptography keys and the associated data. It can be clearly seen that the application design is very parallel, as every encoding feature has it's appropriate decoder, and each use case get it's own separate screen to maximize utility for that specific user.
+
+\subsection{Dynamic Diagram}
+
+The sequence system diagram shown below designates a trace through the flow of our application from the perspective of a sender creating a patient profile and sharing it. 
+
+\begin{landscape}
+\begin{figure}
+    \centering
+    \includegraphics[width=8in]{component-sequence.png}
+    \caption{Component diagram of application's interactions}
+    \label{a}
+\end{figure}
+\end{landscape}
+
+The sequence begins by having the sender create the patient profile by transferring all of the relevant patient data into the ProfileCreator through the use of the triaging checklist, text fields, and image uploads associated with the screen. This profile data is then subsequently sent to the profile encoder, which prepares all of the data to be encoded and sends a request to encode the generated patient data. The CryptoLibrary then proceeds to encrypt the patient data given to it, returning a key back to the user as well as pushing this data forward to the Firebase Cloud for storage. 
+
+Once the encrypted data is stored in the Firebase Cloud, a UUID related to the patient profile is then generated and sent back to the profile creator. The profile creator then finally takes the cryptography key from the crypto library and the UUID from the Firebase Cloud and combines them into a send-able URL so that a receiving party will be able to access the data through the UUID and decrypt it through the cryptography key. 
 
 \section{UI Design}
 % Major screens are provided.  
@@ -198,10 +247,26 @@ The dynamic architecture design system sequence diagram provides a look at the t
 
 
 
-% Insert Bibliography
-% Note: we're required to use IEEE style here
-\clearpage
-\nocite{*}
-\printbibliography[title={References}]
+% % Insert Bibliography
+% % Note: we're required to use IEEE style here
+% \clearpage
+% \nocite{*}
+% \printbibliography[title={References}]
+
+\newpage
+\vspace*{2in}\noindent{}{\Large{}Appendices}
+\newpage
+\begin{appendices}
+
+\section{Profile Schema Definition}
+\label{appendix:profile}
+
+Here, we list the source code used to define the shape of a patient profile. We use the \verb|zod| library for TypeScript, which gives us detailed runtime checks for user-visible feedback (e.g. an invalid date field), as well as compile-time checks for programming errors.
+
+\inputminted{typescript}{profile.ts}
+
+
+
+\end{appendices}
 
 \end{document}
