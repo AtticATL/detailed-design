@@ -244,6 +244,45 @@ Once the encrypted data is stored in the Firebase Cloud, a UUID related to the p
 % Major screens are provided.  
 % Widget selection and layout which is appropriate and logical  
 % Proper UI design principles are applied to the screen design.
+ In this section, we will be displaying the User Interface of our application, breaking down our design decisions and covering all major screens that a user should encounter on their usage of the application. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=2in]{Screenshots/hs.png}
+    \caption{Home Screen UI. Upon opening the application, the user is presented with the home screen shown. This screen is constructed to be very simplistic, with only the necessary functions of the app. The sending and receiving buttons make up the most defined role in the top of the screen, while the rest consists of a scroll-able list of all previously accessed patients by this user. }
+    \label{fig:homescreen}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=5in]{Screenshots/ts.png}
+    \caption{Transfer Screen UI. When the sending button is clicked, the user is then sent to the transfer page. This consists of a long scrolling list including the patient information fields, triage checklist, and image attachment uploading. The user is first presented with the patient information fields, which have checks to ensure that each field is filled in and has acceptable inputs, such as a valid date for the date of birth. The other notes field is absent from this check. Next, the triage checklist. This consists of two checklists, one delineating the triage questions and another going over the different infection areas. These are designed to be straight forward and simple so that they can be quickly run through by even a lightly experienced user. Finally, the attachments field, which consists of a single button to upload images. Whenever an image is added, a thumbnail of it is shown with an option to delete it shown in red under it. Finally, a big green submit button exists at the bottom of the page to submit the profile. This page, much like the rest of the application, is designed to be as minimalistic and straightforward as possible so that precious time is not wasted in the transfer process and anyone can reasonably triage a patient with it.}
+    \label{fig:transferscreen}
+\end{figure}
+
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=2in]{Screenshots/rs.png}
+    \caption{Receive Screen UI: When the receiving button is clicked, the user is sent to this page. This screen is very simple, with a prompt for users to input the transferred URL from a sending party. If the URL is correct and the patient exists on our servers, hitting the continue button will lead to the patients profile as seen in following figure (Figure 8).}
+    \label{fig:receivescreen}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=2in]{Screenshots/prs.png}
+    \caption{Profile Screen UI: This screen represents an overview of the profile of the patient that was transferred. Each sector of patient information is contained within collapsible drop-downs, allowing users to skip irrelevant information and make sure they are presented with only the information that they need. Additionally, notices may be presented at the top of the screen if our internal logic detects an emergency based off of the information inputted in the triage checklist.  At the bottom are two buttons that will allow the user to print this profile, leading to the print screen (Figure 9) or edit the profile, which will lead them back to a mockup of the create profile screen with all prior information already filled in.}
+    \label{fig:receivescreen}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=2in]{Screenshots/ps.png}
+    \caption{Profile Print Screen UI. When the print button is clicked on the profile view screen, the user is then prompted with their native device's print screen for the profile. All of the patient's profile information is condensed into an easily readable PDF format, which can then be printed out onto a piece of paper or saved as a PDF file on the user's local device. The patient profile PDF is constructed in such a way that all of the information is given its own area to easily reference, as well as presenting a format that can be easily digestable to any additional surgeons who may have no experience or use with our application.}
+    \label{fig:printscreen}
+\end{figure}
+
 
 
 
@@ -265,7 +304,68 @@ Here, we list the source code used to define the shape of a patient profile. We 
 
 \inputminted{typescript}{profile.ts}
 
+\textbf{Example Request: } oi-transfer-app.whatever/receive/\$token 
 
+
+\textbf{Example Response: }
+\begin{verbatim}
+{
+  "attachments": Array [
+    {
+      "blob": {
+        "id": "1d2b0b4a-9179-440a-b773-9a1674b85d21",
+        "key": null,
+      },
+      "mimeType": "image/jpeg",
+      "role": "Other",
+    },
+  ],
+  "identity": {
+    "birthYear": 1979,
+    "name": "Jane",
+    "sex": "Female",
+  },
+  "infectionRegions": {
+    "lowerLeft": true,
+    "lowerRight": false,
+    "neckLeft": false,
+    "neckRight": false,
+    "upperLeft": false,
+    "upperRight": false,
+  },
+  "patientHistory": {
+    "currentInfectionHistory": "Infection started a month ago",
+    "pastHistory": "Attempted to resolve",
+  },
+  "triageChecklist": {
+    "difficultyBreathing": true,
+    "difficultySwallowing": true,
+    "tbd": false,
+  },
+}
+\end{verbatim}
+
+
+\textbf{Response Fields:}
+
+\begin{center}
+\begin{tabular}{|p{3cm}|p{10cm}|}
+     \hline
+     \textbf{Parameter} & \textbf{Response} \\
+     \hline
+     \hline
+     Attachments & ID and encryption key to request attachments from cloud bucket where they are stored.\\
+     \hline
+     Identity & Name, sex, and birth year of the patient in question.\\
+     \hline
+     Infection Regions & Checklist to help locate areas affected by the infection that is being transferred.\\
+     \hline
+     Patient History & Long text describing given patient history in the emergency department.\\
+     \hline
+     Triage Checklist & Checklist of current infection status as input by the ED physician, describing the current patient status.\\
+     \hline
+\end{tabular}
+\end{center}
 
 \end{appendices}
 
